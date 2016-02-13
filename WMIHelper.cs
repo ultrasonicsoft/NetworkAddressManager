@@ -129,7 +129,7 @@ namespace SwitchNetConfig
 
 			foreach(ManagementObject mo in moc)
 			{
-				if((bool)mo["ipEnabled"])
+				//if((bool)mo["ipEnabled"])
 				{
 					nicNames.Add( mo["Caption"] );
 				}

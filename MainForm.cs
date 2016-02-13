@@ -8,86 +8,86 @@ using System.Xml;
 
 namespace SwitchNetConfig
 {
-	/// <summary>
-	/// Main Form displayed at startup
-	/// </summary>
-	public class NetworkAddressManagerForm : System.Windows.Forms.Form
-	{
-		#region Designer
+    /// <summary>
+    /// Main Form displayed at startup
+    /// </summary>
+    public class NetworkAddressManagerForm : System.Windows.Forms.Form
+    {
+        #region Designer
 
-		private System.Windows.Forms.Label lblProfile;
-		private System.Windows.Forms.ComboBox cboProfiles;
-		private System.Windows.Forms.Button btnCreateNewProfile;
-		private System.Windows.Forms.ComboBox cboNIC;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label lblIP;
-		private System.Windows.Forms.Label lblSubnet;
-		private System.Windows.Forms.Label lblGateway;
-		private System.Windows.Forms.Label lblDNS;
-		private System.Windows.Forms.TextBox txtIP;
-		private System.Windows.Forms.Button btnActivate;
-		private System.Windows.Forms.Button btnClose;
-		private System.Windows.Forms.TextBox txtDNS;
-		private System.Windows.Forms.TextBox txtGateway;
-		private System.Windows.Forms.TextBox txtSubnet;
-		private System.Windows.Forms.GroupBox grpNIC;
-		private System.Windows.Forms.GroupBox grpIEProxy;
-		private System.Windows.Forms.CheckBox chkUseProxy;
-		private System.Windows.Forms.Label lblProxy;
-		private System.Windows.Forms.CheckBox chkByPassForLocal;
-		private System.Windows.Forms.GroupBox grpProxy;
-		private System.Windows.Forms.TextBox txtProxy;
-		private System.Windows.Forms.GroupBox grpCurrent;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Label lblCurrentDNS;
-		private System.Windows.Forms.Label lblCurrentGateway;
-		private System.Windows.Forms.Label lblCurrentSubnet;
-		private System.Windows.Forms.Label lblCurrentIP;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.Label lblCurrentProxy;
-		private System.Windows.Forms.CheckBox chkDHCP;
+        private System.Windows.Forms.Label lblProfile;
+        private System.Windows.Forms.ComboBox cboProfiles;
+        private System.Windows.Forms.Button btnCreateNewProfile;
+        private System.Windows.Forms.ComboBox cboNIC;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblIP;
+        private System.Windows.Forms.Label lblSubnet;
+        private System.Windows.Forms.Label lblGateway;
+        private System.Windows.Forms.Label lblDNS;
+        private System.Windows.Forms.TextBox txtIP;
+        private System.Windows.Forms.Button btnActivate;
+        private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.TextBox txtDNS;
+        private System.Windows.Forms.TextBox txtGateway;
+        private System.Windows.Forms.TextBox txtSubnet;
+        private System.Windows.Forms.GroupBox grpNIC;
+        private System.Windows.Forms.GroupBox grpIEProxy;
+        private System.Windows.Forms.CheckBox chkUseProxy;
+        private System.Windows.Forms.Label lblProxy;
+        private System.Windows.Forms.CheckBox chkByPassForLocal;
+        private System.Windows.Forms.GroupBox grpProxy;
+        private System.Windows.Forms.TextBox txtProxy;
+        private System.Windows.Forms.GroupBox grpCurrent;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblCurrentDNS;
+        private System.Windows.Forms.Label lblCurrentGateway;
+        private System.Windows.Forms.Label lblCurrentSubnet;
+        private System.Windows.Forms.Label lblCurrentIP;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label lblCurrentProxy;
+        private System.Windows.Forms.CheckBox chkDHCP;
         private NotifyIcon notifyIcon1;
         private ContextMenuStrip sysTrayMenu;
         private ToolStripMenuItem exitToolStripMenuItem;
         private IContainer components;
 
         public NetworkAddressManagerForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+        {
+            //
+            // Required for Windows Form Designer support
+            //
+            InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+            //
+            // TODO: Add any constructor code after InitializeComponent call
+            //
+        }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose(disposing);
+        }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        #region Windows Form Designer generated code
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NetworkAddressManagerForm));
             this.cboProfiles = new System.Windows.Forms.ComboBox();
@@ -524,264 +524,267 @@ namespace SwitchNetConfig
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
-		#endregion
+        }
+        #endregion
 
-		#endregion
+        #endregion
 
-		#region Private Variables and properties
+        #region Private Variables and properties
 
-		// stores all the profiles
-		private ArrayList _Profiles = new ArrayList();
+        // stores all the profiles
+        private ArrayList _Profiles = new ArrayList();
 
-		/// <summary>
-		/// Returns the currently selected profile object
-		/// </summary>
-		private Profile _CurrentProfile
-		{
-			get
-			{
-				// find the profile for the currently selected profile
-				foreach( Profile profile in _Profiles )
-					if( profile.Name.Equals( _ProfileName ) )
-						return profile;
+        /// <summary>
+        /// Returns the currently selected profile object
+        /// </summary>
+        private Profile _CurrentProfile
+        {
+            get
+            {
+                // find the profile for the currently selected profile
+                foreach (Profile profile in _Profiles)
+                    if (profile.Name.Equals(_ProfileName))
+                        return profile;
 
-				return null;
-			}
-		}
+                return null;
+            }
+        }
 
-		/// <summary>
-		/// Returns the NICProfile object for the currently selected NIC Name
-		/// </summary>
-		private NICProfile _CurrentNICProfile
-		{
-			get
-			{
-				// find the NIC Profile for the currently selected NIC name
-				foreach( NICProfile profile in _CurrentProfile.NICProfiles )
-					if( profile.Name.Equals( _NICName ) )
-						return profile;
-				
-				// not found, create a new NIC Profile
-				NICProfile newProfile = new NICProfile( cboNIC.Text );
-				_CurrentProfile.NICProfiles.Add( newProfile );
+        /// <summary>
+        /// Returns the NICProfile object for the currently selected NIC Name
+        /// </summary>
+        private NICProfile _CurrentNICProfile
+        {
+            get
+            {
+                // find the NIC Profile for the currently selected NIC name
+                foreach (NICProfile profile in _CurrentProfile.NICProfiles)
+                    if (profile.Name.Equals(_NICName))
+                        return profile;
 
-				return newProfile;
-			}
-		}
+                // not found, create a new NIC Profile
+                NICProfile newProfile = new NICProfile(cboNIC.Text);
+                _CurrentProfile.NICProfiles.Add(newProfile);
 
-		/// <summary>
-		/// Returns the current NICName
-		/// </summary>
-		private string _NICName
-		{
-			get
-			{
-				return cboNIC.SelectedItem as string;
-			}
-		}
+                return newProfile;
+            }
+        }
 
-		/// <summary>
-		/// returns the current profile name
-		/// </summary>
-		private string _ProfileName 
-		{
-			get
-			{
-				return cboProfiles.SelectedItem as string;
-			}
-		}
+        /// <summary>
+        /// Returns the current NICName
+        /// </summary>
+        private string _NICName
+        {
+            get
+            {
+                return cboNIC.SelectedItem as string;
+            }
+        }
 
-		#endregion
+        /// <summary>
+        /// returns the current profile name
+        /// </summary>
+        private string _ProfileName
+        {
+            get
+            {
+                return cboProfiles.SelectedItem as string;
+            }
+        }
 
-		#region Private Methods
+        #endregion
 
-		/// <summary>
-		/// Load profile from configuration file
-		/// </summary>
-		private void loadProfiles()
-		{
-			_Profiles = ConfigurationHelper.LoadConfig();
-		
-			// populate the profile drop down list
-			cboProfiles.Items.Clear();
-			foreach( Profile profile in _Profiles )
-			{
-				cboProfiles.Items.Add( profile.Name );
-			}
-		}
+        #region Private Methods
 
-		/// <summary>
-		/// Load a particular profile
-		/// </summary>
-		/// <param name="profile"></param>
-		private void loadProfile( Profile profile )
-		{
-			// load the NIC list
-			loadNICs();
+        /// <summary>
+        /// Load profile from configuration file
+        /// </summary>
+        private void loadProfiles()
+        {
+            _Profiles = ConfigurationHelper.LoadConfig();
 
-			// load proxy setting
-			loadIEProxy();			
+            // populate the profile drop down list
+            cboProfiles.Items.Clear();
+            foreach (Profile profile in _Profiles)
+            {
+                cboProfiles.Items.Add(profile.Name);
+            }
+        }
 
-			btnActivate.Enabled = true;
-		}
+        /// <summary>
+        /// Load a particular profile
+        /// </summary>
+        /// <param name="profile"></param>
+        private void loadProfile(Profile profile)
+        {
+            // load the NIC list
+            loadNICs();
 
-		/// <summary>
-		/// Load NIC names
-		/// </summary>
-		private void loadNICs()
-		{
-			// get the NIC names
-			ArrayList nicNames = WMIHelper.GetNICNames();
+            // load proxy setting
+            loadIEProxy();
 
-			// populate the NIC list
-			cboNIC.Items.Clear();
-			foreach( string name in nicNames )
-				cboNIC.Items.Add( name );
+            btnActivate.Enabled = true;
+        }
 
-			// if NIC found, select the first one
-			if( cboNIC.Items.Count > 0 )
-			{
-				cboNIC.SelectedIndex = 0;
-				grpNIC.Enabled = true;
-			}
-		}
+        /// <summary>
+        /// Load NIC names
+        /// </summary>
+        private void loadNICs()
+        {
+            // get the NIC names
+            ArrayList nicNames = WMIHelper.GetNICNames();
+
+            // populate the NIC list
+            cboNIC.Items.Clear();
+            foreach (string name in nicNames)
+                cboNIC.Items.Add(name);
+
+            // if NIC found, select the first one
+            if (cboNIC.Items.Count > 0)
+            {
+                cboNIC.SelectedIndex = 0;
+                grpNIC.Enabled = true;
+            }
+        }
 
 
-		/// <summary>
-		/// Show the IP, DNS, Gateway and Subnet mask for the NIC name
-		/// </summary>
-		/// <param name="nicName"></param>
-		private void loadNICProfile( string nicName )
-		{
-			NICProfile nicProfile = _CurrentNICProfile;
-			if( null == nicProfile ) return;
+        /// <summary>
+        /// Show the IP, DNS, Gateway and Subnet mask for the NIC name
+        /// </summary>
+        /// <param name="nicName"></param>
+        private void loadNICProfile(string nicName)
+        {
+            NICProfile nicProfile = _CurrentNICProfile;
+            if (null == nicProfile) return;
 
-			txtIP.Text = nicProfile.IP;
-			txtSubnet.Text = nicProfile.Subnet;
-			txtGateway.Text = nicProfile.Gateway;
-			txtDNS.Text = nicProfile.DNS;			
-			chkDHCP.Checked = nicProfile.UseDHCP;
-		}
+            txtIP.Text = nicProfile.IP;
+            txtSubnet.Text = nicProfile.Subnet;
+            txtGateway.Text = nicProfile.Gateway;
+            txtDNS.Text = nicProfile.DNS;
+            chkDHCP.Checked = nicProfile.UseDHCP;
+        }
 
-		/// <summary>
-		/// Loads IE Proxy settings
-		/// </summary>
-		private void loadIEProxy( )
-		{
-			IEProfile profile = _CurrentProfile.IEProfile;
+        /// <summary>
+        /// Loads IE Proxy settings
+        /// </summary>
+        private void loadIEProxy()
+        {
+            IEProfile profile = _CurrentProfile.IEProfile;
 
-			chkUseProxy.Checked = profile.UseProxy;
-			chkByPassForLocal.Checked = profile.BypassLocal;
-			//txtLocal.Text = profile.BypassAddresses;
-			txtProxy.Text = profile.ProxyName;
+            chkUseProxy.Checked = profile.UseProxy;
+            chkByPassForLocal.Checked = profile.BypassLocal;
+            //txtLocal.Text = profile.BypassAddresses;
+            txtProxy.Text = profile.ProxyName;
 
-			grpIEProxy.Enabled = true;
-		}
+            grpIEProxy.Enabled = true;
+        }
 
-		private void saveProfiles()
-		{
-			ConfigurationHelper.SaveConfig( _Profiles );
-		}
+        private void saveProfiles()
+        {
+            ConfigurationHelper.SaveConfig(_Profiles);
+        }
 
-		private void createNewProfile()
-		{
-			using( NewProfileDialog newProfileDialog = new NewProfileDialog() )
-			{
+        private void createNewProfile()
+        {
+            using (NewProfileDialog newProfileDialog = new NewProfileDialog())
+            {
 
-				if( DialogResult.OK == newProfileDialog.ShowDialog( this ) )
-				{
-					// create a new profile object
-					Profile newProfile = new Profile( newProfileDialog.NewProfileName );
-					_Profiles.Add( newProfile );
+                if (DialogResult.OK == newProfileDialog.ShowDialog(this))
+                {
+                    // create a new profile object
+                    Profile newProfile = new Profile(newProfileDialog.NewProfileName);
+                    _Profiles.Add(newProfile);
 
-					// show it in the drop down as selected
-					cboProfiles.SelectedIndex = cboProfiles.Items.Add( newProfile.Name );
+                    // show it in the drop down as selected
+                    cboProfiles.SelectedIndex = cboProfiles.Items.Add(newProfile.Name);
 
-					// load the NIC list
-					loadNICs();
-				}
-			}
+                    // load the NIC list
+                    loadNICs();
+                }
+            }
 
             BuildContextMenuWithProfiles();
-		}
+        }
 
-		/// <summary>
-		/// Loads current network configuration for the specified NIC and show in 
-		/// the current configuration block
-		/// </summary>
-		/// <param name="nicName"></param>
-		private void loadCurrentSetting( string nicName )
-		{
-			
-			string [] ipAddresses;
-			string [] subnets;
-			string [] gateways;
-			string [] dnses;
+        /// <summary>
+        /// Loads current network configuration for the specified NIC and show in 
+        /// the current configuration block
+        /// </summary>
+        /// <param name="nicName"></param>
+        private void loadCurrentSetting(string nicName)
+        {
 
-			// Load current IP configuration for the selected NIC
-			WMIHelper.GetIP( nicName, out ipAddresses, out subnets, out gateways, out dnses );
+            string[] ipAddresses;
+            string[] subnets;
+            string[] gateways;
+            string[] dnses;
 
-			// if network connection is disabled, no information will be available
-			if( null == ipAddresses || null == subnets || null == gateways || null == dnses )
-				return;
+            // Load current IP configuration for the selected NIC
+            WMIHelper.GetIP(nicName, out ipAddresses, out subnets, out gateways, out dnses);
 
-			// Show the setting
-			lblCurrentIP.Text = string.Join( ",", ipAddresses );
-			lblCurrentSubnet.Text = string.Join( ",", subnets );
-			lblCurrentGateway.Text = string.Join( ",", gateways );
-			lblCurrentDNS.Text = string.Join( ",", dnses );
-		}
+            // if network connection is disabled, no information will be available
+            if (null == ipAddresses || null == subnets || null == gateways || null == dnses)
+                return;
 
-		/// <summary>
-		/// Displayes current proxy setting for Internet Explorer
-		/// </summary>
-		private void loadCurrentProxySetting()
-		{
-			if( IEProxy.ProxyEnabled )
-				lblCurrentProxy.Text = IEProxy.ProxyServer;
-			else
-				lblCurrentProxy.Text = "No Proxy";
+            // Show the setting
+            lblCurrentIP.Text = string.Join(",", ipAddresses);
+            lblCurrentSubnet.Text = string.Join(",", subnets);
+            lblCurrentGateway.Text = string.Join(",", gateways);
+            lblCurrentDNS.Text = string.Join(",", dnses);
+        }
 
-			if( IEProxy.BypassProxyForLocal )
-				lblCurrentProxy.Text += ". Bypass local";
-			else
-				lblCurrentProxy.Text += ". Do not bypass local";
-		}
+        /// <summary>
+        /// Displayes current proxy setting for Internet Explorer
+        /// </summary>
+        private void loadCurrentProxySetting()
+        {
+            if (IEProxy.ProxyEnabled)
+                lblCurrentProxy.Text = IEProxy.ProxyServer;
+            else
+                lblCurrentProxy.Text = "No Proxy";
 
-		/// <summary>
-		/// Apply currently selected profile
-		/// </summary>
-		private void applyProfile()
-		{
-			ApplySettingDialog applyDialog = new ApplySettingDialog();			
-			applyDialog.Show();
-			applyDialog.Refresh();
+            if (IEProxy.BypassProxyForLocal)
+                lblCurrentProxy.Text += ". Bypass local";
+            else
+                lblCurrentProxy.Text += ". Do not bypass local";
+        }
 
-			// Start applying setting
-			applyDialog.ApplySetting( _CurrentProfile );
+        /// <summary>
+        /// Apply currently selected profile
+        /// </summary>
+        private void applyProfile()
+        {
+            ApplySettingDialog applyDialog = new ApplySettingDialog();
+            applyDialog.Show();
+            applyDialog.Refresh();
 
-			// show current configuration after applying
-			loadCurrentSetting( _NICName );
-			loadCurrentProxySetting();
+            // Start applying setting
+            applyDialog.ApplySetting(_CurrentProfile);
+
+            // show current configuration after applying
+            loadCurrentSetting(_NICName);
+            loadCurrentProxySetting();
 
         }
 
-		private void close()
-		{
-			this.Close();
-		}
+        private void close()
+        {
+            this.Close();
+        }
 
-		private void loadApp()
-		{
-			loadProfiles();
-		    BuildContextMenuWithProfiles();
-			loadCurrentProxySetting();
-		}
+        private void loadApp()
+        {
+            loadProfiles();
+            BuildContextMenuWithProfiles();
+            loadCurrentProxySetting();
+        }
 
-	    private void BuildContextMenuWithProfiles()
-	    {
-            _Profiles = ConfigurationHelper.LoadConfig();
+        private void BuildContextMenuWithProfiles()
+        {
+            if (_Profiles.Count == 0)
+            {
+                _Profiles = ConfigurationHelper.LoadConfig();
+            }
 
             // populate the profile drop down list
             sysTrayMenu.Items.Clear();
@@ -790,10 +793,10 @@ namespace SwitchNetConfig
 
             foreach (Profile profile in _Profiles)
             {
-                sysTrayMenu.Items.Add(profile.Name,null, ChangeProfile);
+                sysTrayMenu.Items.Add(profile.Name, null, ChangeProfile);
             }
-	        sysTrayMenu.Items.Add("-");
-	        sysTrayMenu.Items.Add("E&xit", null, ExitApplication);
+            sysTrayMenu.Items.Add("-");
+            sysTrayMenu.Items.Add("E&xit", null, ExitApplication);
         }
         private void RestoreApplication(object sender, System.EventArgs e)
         {
@@ -808,96 +811,96 @@ namespace SwitchNetConfig
             applyProfile();
         }
 
-	    private void ExitApplication(object sender, System.EventArgs args)
-	    {
-	        close();
-	    }
+        private void ExitApplication(object sender, System.EventArgs args)
+        {
+            close();
+        }
         #endregion
 
         #region Events
 
         private void chkUseProxy_CheckedChanged(object sender, System.EventArgs e)
-		{
-			_CurrentProfile.IEProfile.UseProxy = grpProxy.Enabled = chkUseProxy.Checked;			 
-		}
-		
-		private void cboProfiles_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			loadProfile( _CurrentProfile );
-		}
+        {
+            _CurrentProfile.IEProfile.UseProxy = grpProxy.Enabled = chkUseProxy.Checked;
+        }
 
-		private void txtIP_Leave(object sender, System.EventArgs e)
-		{
-			_CurrentNICProfile.IP = txtIP.Text;
-		}
+        private void cboProfiles_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            loadProfile(_CurrentProfile);
+        }
 
-		private void txtSubnet_Leave(object sender, System.EventArgs e)
-		{
-			_CurrentNICProfile.Subnet = txtSubnet.Text;
-		}
+        private void txtIP_Leave(object sender, System.EventArgs e)
+        {
+            _CurrentNICProfile.IP = txtIP.Text;
+        }
 
-		private void txtGateway_Leave(object sender, System.EventArgs e)
-		{
-			_CurrentNICProfile.Gateway = txtGateway.Text;
-		}
+        private void txtSubnet_Leave(object sender, System.EventArgs e)
+        {
+            _CurrentNICProfile.Subnet = txtSubnet.Text;
+        }
 
-		private void txtDNS_Leave(object sender, System.EventArgs e)
-		{
-			_CurrentNICProfile.DNS = txtDNS.Text;
-		}
+        private void txtGateway_Leave(object sender, System.EventArgs e)
+        {
+            _CurrentNICProfile.Gateway = txtGateway.Text;
+        }
 
-		private void txtProxy_Leave(object sender, System.EventArgs e)
-		{
-			_CurrentProfile.IEProfile.ProxyName = txtProxy.Text;
-		}
-		
-		private void chkByPassForLocal_CheckedChanged(object sender, System.EventArgs e)
-		{
-			_CurrentProfile.IEProfile.BypassLocal = chkByPassForLocal.Checked;
-		}
-		
-		private void txtLocal_Leave(object sender, System.EventArgs e)
-		{
-			//_CurrentProfile.IEProfile.BypassAddresses = txtLocal.Text;
-		}
+        private void txtDNS_Leave(object sender, System.EventArgs e)
+        {
+            _CurrentNICProfile.DNS = txtDNS.Text;
+        }
 
-		private void btnNewProfile_Click(object sender, System.EventArgs e)
-		{
-			createNewProfile();
-		}
+        private void txtProxy_Leave(object sender, System.EventArgs e)
+        {
+            _CurrentProfile.IEProfile.ProxyName = txtProxy.Text;
+        }
 
-		private void cboNIC_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			loadNICProfile( _NICName );
-			loadCurrentSetting( _NICName );			
-		}
+        private void chkByPassForLocal_CheckedChanged(object sender, System.EventArgs e)
+        {
+            _CurrentProfile.IEProfile.BypassLocal = chkByPassForLocal.Checked;
+        }
 
-		private void MainForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			saveProfiles();
-		}
-		
-		private void btnClose_Click(object sender, System.EventArgs e)
-		{
-			close();
-		}
-		
-		private void btnActivate_Click(object sender, System.EventArgs e)
-		{
-			applyProfile();
-		}
+        private void txtLocal_Leave(object sender, System.EventArgs e)
+        {
+            //_CurrentProfile.IEProfile.BypassAddresses = txtLocal.Text;
+        }
 
-		private void MainForm_Load(object sender, System.EventArgs e)
-		{
+        private void btnNewProfile_Click(object sender, System.EventArgs e)
+        {
+            createNewProfile();
+        }
+
+        private void cboNIC_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            loadNICProfile(_NICName);
+            loadCurrentSetting(_NICName);
+        }
+
+        private void MainForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            saveProfiles();
+        }
+
+        private void btnClose_Click(object sender, System.EventArgs e)
+        {
+            close();
+        }
+
+        private void btnActivate_Click(object sender, System.EventArgs e)
+        {
+            applyProfile();
+        }
+
+        private void MainForm_Load(object sender, System.EventArgs e)
+        {
             loadApp();
-		}
-       
+        }
+
         private void chkDHCP_CheckedChanged(object sender, System.EventArgs e)
-		{
-			bool allowIP = !chkDHCP.Checked;
-			txtIP.Enabled = txtSubnet.Enabled = txtGateway.Enabled = txtDNS.Enabled = allowIP;
-			_CurrentNICProfile.UseDHCP = chkDHCP.Checked;
-		}
+        {
+            bool allowIP = !chkDHCP.Checked;
+            txtIP.Enabled = txtSubnet.Enabled = txtGateway.Enabled = txtDNS.Enabled = allowIP;
+            _CurrentNICProfile.UseDHCP = chkDHCP.Checked;
+        }
 
         #endregion
 
