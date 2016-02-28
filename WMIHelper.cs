@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Management;
+using System.Net.NetworkInformation;
 
 namespace SwitchNetConfig
 {
@@ -123,19 +124,15 @@ namespace SwitchNetConfig
 		public static ArrayList GetNICNames()
 		{
 			ArrayList nicNames = new ArrayList();
-
-			ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-			ManagementObjectCollection moc = mc.GetInstances();
-
-			foreach(ManagementObject mo in moc)
-			{
-				//if((bool)mo["ipEnabled"])
-				{
-					nicNames.Add( mo["Caption"] );
-				}
-			}
-
-			return nicNames;
+            NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (NetworkInterface adapter in adapters)
+            {
+                if (adapter.NetworkInterfaceType == NetworkInterfaceType.Tunnel ||
+                    adapter.NetworkInterfaceType == NetworkInterfaceType.Loopback) continue;
+                IPInterfaceProperties properties = adapter.GetIPProperties();
+                nicNames.Add(adapter.Name + " - " + adapter.Description);
+            }
+            return nicNames;
 		}
 
 		#endregion
