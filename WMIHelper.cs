@@ -1,130 +1,174 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Management;
+using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 
 namespace SwitchNetConfig
 {
-	/// <summary>
-	/// A Helper class which provides convenient methods to set/get network
-	/// configuration
-	/// </summary>
-	public class WMIHelper
-	{
-		#region Public Static
+    /// <summary>
+    /// A Helper class which provides convenient methods to set/get network
+    /// configuration
+    /// </summary>
+    public class WMIHelper
+    {
+        #region Public Static
 
-		/// <summary>
-		/// Enable DHCP on the NIC
-		/// </summary>
-		/// <param name="nicName">Name of the NIC</param>
-		public static void SetDHCP( string nicName )
-		{
-			ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-			ManagementObjectCollection moc = mc.GetInstances();
+        private static NetworkInterface[] adapters;
+        /// <summary>
+        /// Enable DHCP on the NIC
+        /// </summary>
+        /// <param name="nicName">Name of the NIC</param>
+        public static void SetDHCP(string nicName)
+        {
+            ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+            ManagementObjectCollection moc = mc.GetInstances();
 
-			foreach(ManagementObject mo in moc)
-			{
-				// Make sure this is a IP enabled device. Not something like memory card or VM Ware
-				if( (bool)mo["IPEnabled"] )
-				{
-					if( mo["Caption"].Equals( nicName ) )
-					{
-						ManagementBaseObject newDNS = mo.GetMethodParameters( "SetDNSServerSearchOrder" );
-						newDNS[ "DNSServerSearchOrder" ] = null;
-						ManagementBaseObject enableDHCP = mo.InvokeMethod( "EnableDHCP", null, null);
-						ManagementBaseObject setDNS = mo.InvokeMethod( "SetDNSServerSearchOrder", newDNS, null);
-					}
-				}
-			}
-		}
-		
-		/// <summary>
-		/// Set IP for the specified network card name
-		/// </summary>
-		/// <param name="nicName">Caption of the network card</param>
-		/// <param name="IpAddresses">Comma delimited string containing one or more IP</param>
-		/// <param name="SubnetMask">Subnet mask</param>
-		/// <param name="Gateway">Gateway IP</param>
-		/// <param name="DnsSearchOrder">Comma delimited DNS IP</param>
-		public static void SetIP( string nicName, string IpAddresses, string SubnetMask, string Gateway, string DnsSearchOrder)
-		{
-			ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-			ManagementObjectCollection moc = mc.GetInstances();
+            foreach (ManagementObject mo in moc)
+            {
+                // Make sure this is a IP enabled device. Not something like memory card or VM Ware
+                if ((bool)mo["IPEnabled"])
+                {
+                    if (mo["Caption"].Equals(nicName))
+                    {
+                        ManagementBaseObject newDNS = mo.GetMethodParameters("SetDNSServerSearchOrder");
+                        newDNS["DNSServerSearchOrder"] = null;
+                        ManagementBaseObject enableDHCP = mo.InvokeMethod("EnableDHCP", null, null);
+                        ManagementBaseObject setDNS = mo.InvokeMethod("SetDNSServerSearchOrder", newDNS, null);
+                    }
+                }
+            }
+        }
 
-			foreach(ManagementObject mo in moc)
-			{
-				// Make sure this is a IP enabled device. Not something like memory card or VM Ware
-				if( (bool)mo["IPEnabled"] )
-				{
-					if( mo["Caption"].Equals( nicName ) )
-					{
+        /// <summary>
+        /// Set IP for the specified network card name
+        /// </summary>
+        /// <param name="nicName">Caption of the network card</param>
+        /// <param name="IpAddresses">Comma delimited string containing one or more IP</param>
+        /// <param name="SubnetMask">Subnet mask</param>
+        /// <param name="Gateway">Gateway IP</param>
+        /// <param name="DnsSearchOrder">Comma delimited DNS IP</param>
+        public static void SetIP(string nicName, string IpAddresses, string SubnetMask, string Gateway, string DnsSearchOrder)
+        {
+            ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+            ManagementObjectCollection moc = mc.GetInstances();
 
-						ManagementBaseObject newIP = mo.GetMethodParameters( "EnableStatic" );
-						ManagementBaseObject newGate = mo.GetMethodParameters( "SetGateways" );
-						ManagementBaseObject newDNS = mo.GetMethodParameters( "SetDNSServerSearchOrder" );
-								
-						newGate[ "DefaultIPGateway" ] = new string[] { Gateway };
-						newGate[ "GatewayCostMetric" ] = new int[] { 1 };
+            foreach (ManagementObject mo in moc)
+            {
+                // Make sure this is a IP enabled device. Not something like memory card or VM Ware
+                if ((bool)mo["IPEnabled"])
+                {
+                    if (mo["Caption"].Equals(nicName))
+                    {
 
-						newIP[ "IPAddress" ] = IpAddresses.Split( ',' );
-						newIP[ "SubnetMask" ] = new string[] { SubnetMask };
+                        ManagementBaseObject newIP = mo.GetMethodParameters("EnableStatic");
+                        ManagementBaseObject newGate = mo.GetMethodParameters("SetGateways");
+                        ManagementBaseObject newDNS = mo.GetMethodParameters("SetDNSServerSearchOrder");
 
-						newDNS[ "DNSServerSearchOrder" ] = DnsSearchOrder.Split(',');
+                        newGate["DefaultIPGateway"] = new string[] { Gateway };
+                        newGate["GatewayCostMetric"] = new int[] { 1 };
 
-						ManagementBaseObject setIP = mo.InvokeMethod( "EnableStatic", newIP, null);
-						ManagementBaseObject setGateways = mo.InvokeMethod( "SetGateways", newGate, null);
-						ManagementBaseObject setDNS = mo.InvokeMethod( "SetDNSServerSearchOrder", newDNS, null);
+                        newIP["IPAddress"] = IpAddresses.Split(',');
+                        newIP["SubnetMask"] = new string[] { SubnetMask };
 
-						break;
-					}
-				}
-			}
-		}
+                        newDNS["DNSServerSearchOrder"] = DnsSearchOrder.Split(',');
 
-		/// <summary>
-		/// Returns the network card configuration of the specified NIC
-		/// </summary>
-		/// <param name="nicName">Name of the NIC</param>
-		/// <param name="ipAdresses">Array of IP</param>
-		/// <param name="subnets">Array of subnet masks</param>
-		/// <param name="gateways">Array of gateways</param>
-		/// <param name="dnses">Array of DNS IP</param>
-		public static void GetIP( string nicName, out string [] ipAdresses, out string [] subnets, out string [] gateways, out string [] dnses )
-		{
-			ipAdresses = null;
-			subnets = null;
-			gateways = null;
-			dnses = null;
+                        ManagementBaseObject setIP = mo.InvokeMethod("EnableStatic", newIP, null);
+                        ManagementBaseObject setGateways = mo.InvokeMethod("SetGateways", newGate, null);
+                        ManagementBaseObject setDNS = mo.InvokeMethod("SetDNSServerSearchOrder", newDNS, null);
 
-			ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-			ManagementObjectCollection moc = mc.GetInstances();
+                        break;
+                    }
+                }
+            }
+        }
 
-			foreach(ManagementObject mo in moc)
-			{
-				// Make sure this is a IP enabled device. Not something like memory card or VM Ware
-				if( (bool)mo["ipEnabled"] )
-				{
-					if( mo["Caption"].Equals( nicName ) )
-					{
-						ipAdresses = (string[]) mo["IPAddress"];
-						subnets = (string[]) mo["IPSubnet"];
-						gateways = (string[]) mo["DefaultIPGateway"];
-						dnses = (string[]) mo["DNSServerSearchOrder"];
+        /// <summary>
+        /// Returns the network card configuration of the specified NIC
+        /// </summary>
+        /// <param name="nicName">Name of the NIC</param>
+        /// <param name="ipAdresses">Array of IP</param>
+        /// <param name="subnets">Array of subnet masks</param>
+        /// <param name="gateways">Array of gateways</param>
+        /// <param name="dnses">Array of DNS IP</param>
+        public static void GetIP(string nicName, out string[] ipAdresses, out string[] subnets, out string[] gateways, out string[] dnses)
+        {
+            ipAdresses = null;
+            subnets = null;
+            gateways = null;
+            dnses = null;
 
-						break;
-					}
-				}
-			}
-		}
+            List<string> allIpAddressList = new List<string>();
+            int ipAdddressIndex = 0;
+            foreach (var networkInterface in adapters)
+            {
+                ipAdddressIndex = 0;
+                var temp = networkInterface.Name + " - " + networkInterface.Description;
+                if (temp.Equals(nicName))
+                {
 
-		/// <summary>
-		/// Returns the list of Network Interfaces installed
-		/// </summary>
-		/// <returns>Array list of string</returns>
-		public static ArrayList GetNICNames()
-		{
-			ArrayList nicNames = new ArrayList();
-            NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
+                    var stringAddress = networkInterface.GetIPProperties().UnicastAddresses[0].Address.ToString();
+                    var ipProps = networkInterface.GetIPProperties();
+                    var gatewayAddresses = networkInterface.GetIPProperties().GatewayAddresses;
+                    if (gatewayAddresses != null && gatewayAddresses[0] != null)
+                    {
+                        gateways = new [] { gatewayAddresses[0].Address.ToString()};
+                    }
+                    foreach (var ip in ipProps.UnicastAddresses)
+                    {
+                        if ((networkInterface.OperationalStatus == OperationalStatus.Up) && (ip.Address.AddressFamily == AddressFamily.InterNetwork))
+                        {
+                            if (ip.Address != null)
+                            {
+                                allIpAddressList.Add(ip.Address.ToString());
+                            }
+                            if (ip.IPv4Mask != null)
+                            {
+                                subnets = new[] { ip.IPv4Mask.ToString() };
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            ipAdresses = allIpAddressList.ToArray();
+
+
+            //ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+            //ManagementObjectCollection moc = mc.GetInstances();
+
+            //foreach (ManagementObject mo in moc)
+            //{
+            //    // Make sure this is a IP enabled device. Not something like memory card or VM Ware
+            //    //if( (bool)mo["ipEnabled"] )
+            //    {
+
+            //        var nicNamePart = nicName.Split('-')[1].Trim();
+
+            //        if (mo["Caption"].ToString().Contains(nicNamePart))
+            //        {
+            //            ipAdresses = (string[])mo["IPAddress"];
+            //            subnets = (string[])mo["IPSubnet"];
+            //            gateways = (string[])mo["DefaultIPGateway"];
+            //            dnses = (string[])mo["DNSServerSearchOrder"];
+
+            //            break;
+            //        }
+            //    }
+            //}
+        }
+
+        /// <summary>
+        /// Returns the list of Network Interfaces installed
+        /// </summary>
+        /// <returns>Array list of string</returns>
+        public static ArrayList GetNICNames()
+        {
+            ArrayList nicNames = new ArrayList();
+            adapters = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface adapter in adapters)
             {
                 if (adapter.NetworkInterfaceType == NetworkInterfaceType.Tunnel ||
@@ -133,8 +177,8 @@ namespace SwitchNetConfig
                 nicNames.Add(adapter.Name + " - " + adapter.Description);
             }
             return nicNames;
-		}
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

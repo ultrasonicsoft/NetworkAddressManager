@@ -723,14 +723,26 @@ namespace SwitchNetConfig
             WMIHelper.GetIP(nicName, out ipAddresses, out subnets, out gateways, out dnses);
 
             // if network connection is disabled, no information will be available
-            if (null == ipAddresses || null == subnets || null == gateways || null == dnses)
-                return;
+            //if (null == ipAddresses || null == subnets || null == gateways || null == dnses)
+            //    return;
 
             // Show the setting
-            lblCurrentIP.Text = string.Join(",", ipAddresses);
-            lblCurrentSubnet.Text = string.Join(",", subnets);
-            lblCurrentGateway.Text = string.Join(",", gateways);
-            lblCurrentDNS.Text = string.Join(",", dnses);
+            if (ipAddresses != null)
+            {
+                lblCurrentIP.Text = string.Join(",", ipAddresses);
+            }
+            if (subnets != null)
+            {
+                lblCurrentSubnet.Text = string.Join(",", subnets);
+            }
+            if (gateways != null)
+            {
+                lblCurrentGateway.Text = string.Join(",", gateways);
+            }
+            if (dnses != null)
+            {
+                lblCurrentDNS.Text = string.Join(",", dnses);
+            }
         }
 
         /// <summary>
