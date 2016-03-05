@@ -57,30 +57,35 @@ namespace SwitchNetConfig
 
             foreach (ManagementObject mo in moc)
             {
+                Console.WriteLine(mo["Caption"]);
+                var parts = mo["Caption"].ToString().Split(' ');
+                var currentNICName =  string.Join(" ", parts, 1, parts.Length-1);
+                Console.WriteLine(currentNICName);
+
                 // Make sure this is a IP enabled device. Not something like memory card or VM Ware
-                if ((bool)mo["IPEnabled"])
+                //if ((bool)mo["IPEnabled"])
+                //{
+                //    if (mo["Caption"].Equals(nicName))
+                //    {
+                if (currentNICName.Equals(nicName))
                 {
-                    if (mo["Caption"].Equals(nicName))
-                    {
+                    ManagementBaseObject newIP = mo.GetMethodParameters("EnableStatic");
+                    ManagementBaseObject newGate = mo.GetMethodParameters("SetGateways");
+                    ManagementBaseObject newDNS = mo.GetMethodParameters("SetDNSServerSearchOrder");
 
-                        ManagementBaseObject newIP = mo.GetMethodParameters("EnableStatic");
-                        ManagementBaseObject newGate = mo.GetMethodParameters("SetGateways");
-                        ManagementBaseObject newDNS = mo.GetMethodParameters("SetDNSServerSearchOrder");
+                    newGate["DefaultIPGateway"] = new string[] { Gateway };
+                    newGate["GatewayCostMetric"] = new int[] { 1 };
 
-                        newGate["DefaultIPGateway"] = new string[] { Gateway };
-                        newGate["GatewayCostMetric"] = new int[] { 1 };
+                    newIP["IPAddress"] = IpAddresses.Split(',');
+                    newIP["SubnetMask"] = new string[] { SubnetMask };
 
-                        newIP["IPAddress"] = IpAddresses.Split(',');
-                        newIP["SubnetMask"] = new string[] { SubnetMask };
+                    newDNS["DNSServerSearchOrder"] = DnsSearchOrder.Split(',');
 
-                        newDNS["DNSServerSearchOrder"] = DnsSearchOrder.Split(',');
+                    ManagementBaseObject setIP = mo.InvokeMethod("EnableStatic", newIP, null);
+                    ManagementBaseObject setGateways = mo.InvokeMethod("SetGateways", newGate, null);
+                    ManagementBaseObject setDNS = mo.InvokeMethod("SetDNSServerSearchOrder", newDNS, null);
 
-                        ManagementBaseObject setIP = mo.InvokeMethod("EnableStatic", newIP, null);
-                        ManagementBaseObject setGateways = mo.InvokeMethod("SetGateways", newGate, null);
-                        ManagementBaseObject setDNS = mo.InvokeMethod("SetDNSServerSearchOrder", newDNS, null);
-
-                        break;
-                    }
+                    break;
                 }
             }
         }
@@ -105,16 +110,22 @@ namespace SwitchNetConfig
             foreach (var networkInterface in adapters)
             {
                 ipAdddressIndex = 0;
-                var temp = networkInterface.Name + " - " + networkInterface.Description;
-                if (temp.Equals(nicName))
+                //var temp = networkInterface.Name + " - " + networkInterface.Description;
+                if (networkInterface.Description.Equals(nicName))
                 {
 
                     var stringAddress = networkInterface.GetIPProperties().UnicastAddresses[0].Address.ToString();
                     var ipProps = networkInterface.GetIPProperties();
                     var gatewayAddresses = networkInterface.GetIPProperties().GatewayAddresses;
-                    if (gatewayAddresses != null && gatewayAddresses[0] != null)
+                    if (gatewayAddresses?[0] != null)
                     {
-                        gateways = new [] { gatewayAddresses[0].Address.ToString()};
+                        gateways = new[] { gatewayAddresses[0].Address.ToString() };
+                    }
+
+                    var dnsAddresses = networkInterface.GetIPProperties().DnsAddresses;
+                    if (dnsAddresses?[0] != null)
+                    {
+                        dnses = new[] { dnsAddresses[0].ToString() };
                     }
                     foreach (var ip in ipProps.UnicastAddresses)
                     {
@@ -174,7 +185,8 @@ namespace SwitchNetConfig
                 if (adapter.NetworkInterfaceType == NetworkInterfaceType.Tunnel ||
                     adapter.NetworkInterfaceType == NetworkInterfaceType.Loopback) continue;
                 IPInterfaceProperties properties = adapter.GetIPProperties();
-                nicNames.Add(adapter.Name + " - " + adapter.Description);
+                //nicNames.Add(adapter.Name + " - " + adapter.Description);
+                nicNames.Add(adapter.Description);
             }
             return nicNames;
         }

@@ -771,7 +771,7 @@ namespace SwitchNetConfig
             applyDialog.Refresh();
 
             // Start applying setting
-            applyDialog.ApplySetting(_CurrentProfile);
+            applyDialog.ApplySetting(_CurrentProfile, _NICName);
 
             // show current configuration after applying
             loadCurrentSetting(_NICName);

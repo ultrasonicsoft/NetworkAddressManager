@@ -135,14 +135,14 @@ namespace SwitchNetConfig
 
 		#endregion
 
-		internal void ApplySetting( Profile profile )
+		internal void ApplySetting( Profile profile, string selectedNIC )
 		{
 			lblProfileName.Text = profile.Name;
 
 			// Invole the profile manager to apply the profile
 			ProfileManager manager = new ProfileManager( profile );
 			manager.OnStatusUpdate += new StatusUpdate(manager_OnStatusUpdate);
-			manager.Run( );
+			manager.Run(selectedNIC);
 
 			btnOK.Enabled = true;
 		}
