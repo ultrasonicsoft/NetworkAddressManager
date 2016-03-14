@@ -5,6 +5,7 @@ using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using log4net;
 
 namespace SwitchNetConfig
 {
@@ -14,6 +15,8 @@ namespace SwitchNetConfig
     /// </summary>
     public class WMIHelper
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(WMIHelper));
+
         #region Public Static
 
         private static NetworkInterface[] adapters;
@@ -52,41 +55,64 @@ namespace SwitchNetConfig
         /// <param name="DnsSearchOrder">Comma delimited DNS IP</param>
         public static void SetIP(string nicName, string IpAddresses, string SubnetMask, string Gateway, string DnsSearchOrder)
         {
-            ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-            ManagementObjectCollection moc = mc.GetInstances();
+            log.Debug("Trying to setup IP address...");
+            log.Debug("nicName: " + nicName);
+            log.Debug("IpAddresses: " + IpAddresses);
+            log.Debug("SubnetMask: " + SubnetMask);
+            log.Debug("Gateway: " + Gateway);
+            log.Debug("DnsSearchOrder: " + DnsSearchOrder);
 
-            foreach (ManagementObject mo in moc)
+            try
             {
-                Console.WriteLine(mo["Caption"]);
-                var parts = mo["Caption"].ToString().Split(' ');
-                var currentNICName =  string.Join(" ", parts, 1, parts.Length-1);
-                Console.WriteLine(currentNICName);
 
-                // Make sure this is a IP enabled device. Not something like memory card or VM Ware
-                //if ((bool)mo["IPEnabled"])
-                //{
-                //    if (mo["Caption"].Equals(nicName))
-                //    {
-                if (currentNICName.Equals(nicName))
+
+                ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+                ManagementObjectCollection moc = mc.GetInstances();
+
+
+                foreach (ManagementObject mo in moc)
                 {
-                    ManagementBaseObject newIP = mo.GetMethodParameters("EnableStatic");
-                    ManagementBaseObject newGate = mo.GetMethodParameters("SetGateways");
-                    ManagementBaseObject newDNS = mo.GetMethodParameters("SetDNSServerSearchOrder");
+                    Console.WriteLine(mo["Caption"]);
+                    var parts = mo["Caption"].ToString().Split(' ');
+                    var currentNICName = string.Join(" ", parts, 1, parts.Length - 1);
+                    Console.WriteLine(currentNICName);
+                    log.Debug("NIC: " + currentNICName);
 
-                    newGate["DefaultIPGateway"] = new string[] { Gateway };
-                    newGate["GatewayCostMetric"] = new int[] { 1 };
+                    // Make sure this is a IP enabled device. Not something like memory card or VM Ware
+                    //if ((bool)mo["IPEnabled"])
+                    //{
+                    //    if (mo["Caption"].Equals(nicName))
+                    //    {
+                    if (currentNICName.Equals(nicName))
+                    {
+                        log.Debug("Found selected NIC to be updated: " + currentNICName);
 
-                    newIP["IPAddress"] = IpAddresses.Split(',');
-                    newIP["SubnetMask"] = new string[] { SubnetMask };
+                        ManagementBaseObject newIP = mo.GetMethodParameters("EnableStatic");
+                        ManagementBaseObject newGate = mo.GetMethodParameters("SetGateways");
+                        ManagementBaseObject newDNS = mo.GetMethodParameters("SetDNSServerSearchOrder");
 
-                    newDNS["DNSServerSearchOrder"] = DnsSearchOrder.Split(',');
+                        newGate["DefaultIPGateway"] = new string[] { Gateway };
+                        newGate["GatewayCostMetric"] = new int[] { 1 };
 
-                    ManagementBaseObject setIP = mo.InvokeMethod("EnableStatic", newIP, null);
-                    ManagementBaseObject setGateways = mo.InvokeMethod("SetGateways", newGate, null);
-                    ManagementBaseObject setDNS = mo.InvokeMethod("SetDNSServerSearchOrder", newDNS, null);
+                        log.Debug("New IP Addresses: " + IpAddresses);
+                        newIP["IPAddress"] = IpAddresses.Split(',');
+                        newIP["SubnetMask"] = new string[] { SubnetMask };
 
-                    break;
+                        newDNS["DNSServerSearchOrder"] = DnsSearchOrder.Split(',');
+
+                        ManagementBaseObject setIP = mo.InvokeMethod("EnableStatic", newIP, null);
+                        ManagementBaseObject setGateways = mo.InvokeMethod("SetGateways", newGate, null);
+                        ManagementBaseObject setDNS = mo.InvokeMethod("SetDNSServerSearchOrder", newDNS, null);
+
+                        log.Debug("Updated IP address succesfully!");
+
+                        break;
+                    }
                 }
+            }
+            catch (Exception exception)
+            {
+                log.Error(exception);
             }
         }
 
