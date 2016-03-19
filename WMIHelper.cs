@@ -143,13 +143,13 @@ namespace SwitchNetConfig
                     var stringAddress = networkInterface.GetIPProperties().UnicastAddresses[0].Address.ToString();
                     var ipProps = networkInterface.GetIPProperties();
                     var gatewayAddresses = networkInterface.GetIPProperties().GatewayAddresses;
-                    if (gatewayAddresses?[0] != null)
+                    if (gatewayAddresses !=null && gatewayAddresses[0] != null)
                     {
                         gateways = new[] { gatewayAddresses[0].Address.ToString() };
                     }
 
                     var dnsAddresses = networkInterface.GetIPProperties().DnsAddresses;
-                    if (dnsAddresses?[0] != null)
+                    if (dnsAddresses!=null && dnsAddresses[0] != null)
                     {
                         dnses = new[] { dnsAddresses[0].ToString() };
                     }
